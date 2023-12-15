@@ -11,5 +11,57 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    //// Replace this comment with your code.
+    /// and(and(not(a), b), sel)
+    Not(in=a, out=notA);
+    And(a=notA, b=b, out=andNotAB);
+    And(a=andNotAB, b=sel, out=synthesis0);
+
+    /// and(and(a, not(b)), not(sel))
+    Not(in=b, out=notB);
+    Not(in=sel, out=notSel);
+    And(a=a, b=notB, out=andANotB);
+    And(a=andANotB, b=notSel, out=synthesis1);
+
+    /// and(and(a, b), not(sel))
+    And(a=a, b=b, out=andAB);
+    And(a=andAB, b=notSel, out=synthesis2);
+
+    /// and(and(a, b), sel)
+    And(a=andAB, b=sel, out=synthesis3);
+
+
+    // Or all together
+    Or(a=synthesis0, b=synthesis1, out=temp0);
+    Or(a=temp0, b=synthesis2, out=temp1);
+    Or(a=temp1, b=synthesis3, out=out);
 }
+
+
+
+/**
+Boolean function synthesis
+
+AVAILABLE CHIPS
+nand
+not
+and
+or
+xor
+
+
+Truth tsble to boolean expression
+
+|   a   |   b   |  sel  |  out  |
+|   0   |   0   |   0   |   0   |
+|   0   |   0   |   1   |   0   |
+|   0   |   1   |   0   |   0   |
+|   0   |   1   |   1   |   1   |   /// and(and(not(a), b), sel)
+|   1   |   0   |   0   |   1   |   /// and(and(a, not(b)), not(sel))
+|   1   |   0   |   1   |   0   |
+|   1   |   1   |   0   |   1   |   /// and(and(a, b), not(sel))
+|   1   |   1   |   1   |   1   |   /// and(and(a, b), sel)
+
+Or them together
+
+- and(xor(a, b), sel) or and(xor(a, b), not(sel)) or xor(nand(a, not(b)), sel) or and(and(a, b), sel)
+*/

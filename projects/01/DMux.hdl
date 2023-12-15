@@ -11,5 +11,33 @@ CHIP DMux {
     OUT a, b;
 
     PARTS:
-    //// Replace this comment with your code.
+    /// a === and(in, not(sel))
+    Not(in=sel, out=notSel);
+    And(a=in, b=notSel, out=a);
+
+    /// b === and(in, sel)
+    And(a=in, b=sel, out=b);
 }
+
+
+
+/**
+Boolean function synthesis
+
+AVAILABLE CHIPS
+nand
+not
+and
+or
+xor
+mux
+
+
+Truth tsble to boolean expression
+
+|  in   |  sel  |   a   |   b   |
+|   0   |   0   |   0   |   0   |
+|   0   |   1   |   0   |   0   |
+|   1   |   0   |   1   |   0   |   /// a === and(in, not(sel))
+|   1   |   1   |   0   |   1   |   /// b === and(in, sel)
+*/
