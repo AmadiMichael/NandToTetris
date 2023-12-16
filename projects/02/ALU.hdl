@@ -40,5 +40,47 @@ CHIP ALU {
         ng;      // (out < 0,  1, 0)
 
     PARTS:
-    //// Replace this comment with your code.
+
+    /// x pre settings
+    
+    /// zx setting
+    Mux16(a=x, b=false, sel=zx, out=zx-x);
+    /// nx setting
+    Not16(in=zx-x, out=neg-zx-x);
+    Mux16(a=zx-x, b=neg-zx-x, sel=nx, out=nx-zx-x);
+
+
+    /// y pre setting
+
+    /// zy setting
+    Mux16(a=y, b=false, sel=zy, out=zy-y);
+    /// ny setting
+    Not16(in=zy-y, out=neg-zy-y);
+    Mux16(a=zy-y, b=neg-zy-y, sel=ny, out=ny-zy-y);
+
+
+
+    /// f function to compute
+    And16(a=nx-zx-x, b=ny-zy-y, out=and-x-y);
+    Add16(a=nx-zx-x, b=ny-zy-y, out=add-x-y);
+    Mux16(a=and-x-y, b=add-x-y, sel=f, out=f-x-y);
+
+
+
+    /// no
+    Not16(in=f-x-y, out=no-f-x-y);
+    Mux16(a=f-x-y, b=no-f-x-y, sel=no, out=out, out[0..7]=temp-out0, out[8..15]=temp-out1, out[15]=signed-bit);
+
+
+
+    /// zr
+    Or8Way(in=temp-out0, out=temp0);
+    Or8Way(in=temp-out1, out=temp1);
+    Or(a=temp0, b=temp1, out=temp2);
+    Not(in=temp2, out=zr);
+
+
+
+    /// ng
+    Mux(a=false, b=true, sel=signed-bit, out=ng);
 }
